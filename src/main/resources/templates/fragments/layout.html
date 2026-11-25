@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · 智慧图书馆'">智慧图书馆</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/axios.min.js}"></script>
+</head>
+<body>
+
+<header th:fragment="navbar(active)" class="navbar">
+    <div class="nav-inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand-mark">书</span>
+            <span>智慧图书馆</span>
+        </a>
+        <nav class="nav-links">
+            <a th:href="@{/}" th:classappend="${active == 'home'} ? 'active'">首页</a>
+            <a th:if="${session.loginUser != null and session.loginUser.role == 'READER'}"
+               th:href="@{/reader/borrows}" th:classappend="${active == 'my'} ? 'active'">我的借阅</a>
+            <a th:if="${session.loginUser != null and session.loginUser.role == 'ADMIN'}"
+               th:href="@{/admin}" th:classappend="${active == 'admin'} ? 'active'">管理后台</a>
+        </nav>
+        <div class="nav-user" th:if="${session.loginUser != null}">
+            <span class="avatar" th:text="${#strings.substring(session.loginUser.name, 0, 1)}">管</span>
+            <div class="user-meta">
+                <span class="user-name" th:text="${session.loginUser.name}">管理员</span>
+                <span class="role-tag"
+                      th:text="${session.loginUser.role == 'ADMIN'} ? '管理员' : '读者'">读者</span>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="logout()">退出</button>
+        </div>
+        <div class="nav-auth" th:if="${session.loginUser == null}">
+            <a class="btn btn-ghost btn-sm" th:href="@{/login}">登录</a>
+            <a class="btn btn-primary btn-sm" th:href="@{/register}">注册</a>
+        </div>
+    </div>
+</header>
+
+<footer th:fragment="footer" class="footer">
+    实验七 · 图书管理系统 &nbsp;|&nbsp; Spring Boot + MyBatis-Plus + Thymeleaf + MySQL + Axios
+</footer>
+
+</body>
+</html>

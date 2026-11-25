@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('管理后台')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar('admin')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <div>
+            <h1>管理后台</h1>
+            <p class="subtitle">维护馆藏图书、读者账号，并跟踪全部借阅记录</p>
+        </div>
+        <div class="tabs">
+            <button type="button" class="tab active" data-tab="books">图书管理</button>
+            <button type="button" class="tab" data-tab="readers">读者管理</button>
+            <button type="button" class="tab" data-tab="borrows">借阅记录</button>
+        </div>
+    </section>
+
+    <!-- 图书管理 -->
+    <section class="tab-panel active" id="panel-books">
+        <div class="panel">
+            <div class="panel-head">
+                <div class="search-bar">
+                    <input type="text" id="book-keyword" placeholder="按书名、作者或 ISBN 搜索">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-book-search">搜索</button>
+                    <button type="button" class="btn btn-ghost btn-sm" id="btn-book-reset">重置</button>
+                </div>
+                <button type="button" class="btn btn-primary" id="btn-book-add">+ 新增图书</button>
+            </div>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>书名 / 作者</th>
+                        <th>ISBN</th>
+                        <th>分类</th>
+                        <th>价格</th>
+                        <th>可借 / 馆藏</th>
+                        <th class="right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="book-body"></tbody>
+                </table>
+            </div>
+            <div class="empty" id="book-empty" style="display:none">暂无图书数据</div>
+            <div class="pager" id="book-pager" style="display:none">
+                <button type="button" class="btn btn-ghost btn-sm" id="book-prev">上一页</button>
+                <span id="book-page-info">第 1 / 1 页</span>
+                <button type="button" class="btn btn-ghost btn-sm" id="book-next">下一页</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 读者管理 -->
+    <section class="tab-panel" id="panel-readers">
+        <div class="panel">
+            <div class="panel-head">
+                <div class="search-bar">
+                    <input type="text" id="reader-keyword" placeholder="按账号、姓名或手机号搜索">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-reader-search">搜索</button>
+                    <button type="button" class="btn btn-ghost btn-sm" id="btn-reader-reset">重置</button>
+                </div>
+                <button type="button" class="btn btn-primary" id="btn-reader-add">+ 新增读者</button>
+            </div>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>账号 / 姓名</th>
+                        <th>手机号</th>
+                        <th>邮箱</th>
+                        <th>状态</th>
+                        <th>注册时间</th>
+                        <th class="right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="reader-body"></tbody>
+                </table>
+            </div>
+            <div class="empty" id="reader-empty" style="display:none">暂无读者数据</div>
+            <div class="pager" id="reader-pager" style="display:none">
+                <button type="button" class="btn btn-ghost btn-sm" id="reader-prev">上一页</button>
+                <span id="reader-page-info">第 1 / 1 页</span>
+                <button type="button" class="btn btn-ghost btn-sm" id="reader-next">下一页</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 借阅记录 -->
+    <section class="tab-panel" id="panel-borrows">
+        <div class="panel">
+            <div class="panel-head">
+                <div class="search-bar">
+                    <input type="text" id="borrow-keyword" placeholder="按图书名、读者姓名或账号搜索">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-borrow-search">搜索</button>
+                    <button type="button" class="btn btn-ghost btn-sm" id="btn-borrow-reset">重置</button>
+                </div>
+                <span class="tag blue" id="borrow-tip">共 0 条</span>
+            </div>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>图书</th>
+                        <th>读者</th>
+                        <th>借阅日期</th>
+                        <th>应还日期</th>
+                        <th>归还日期</th>
+                        <th>状态</th>
+                        <th class="right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="borrow-body"></tbody>
+                </table>
+            </div>
+            <div class="empty" id="borrow-empty" style="display:none">暂无借阅记录</div>
+        </div>
+    </section>
+</main>
+
+<!-- 图书编辑弹窗 -->
+<div class="modal-mask" id="book-modal">
+    <div class="modal">
+        <div class="modal-head">
+            <h3 id="book-modal-title">新增图书</h3>
+            <button type="button" class="modal-close" data-close="book-modal">✕</button>
+        </div>
+        <form id="book-form">
+            <div class="modal-body">
+                <input type="hidden" id="book-id">
+                <div class="form-item">
+                    <label for="book-title">书名</label>
+                    <input type="text" id="book-title" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="book-author">作者</label>
+                        <input type="text" id="book-author" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="book-isbn">ISBN</label>
+                        <input type="text" id="book-isbn" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="book-publisher">出版社</label>
+                        <input type="text" id="book-publisher">
+                    </div>
+                    <div class="form-item">
+                        <label for="book-category">分类</label>
+                        <input type="text" id="book-category" placeholder="如：计算机">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="book-price">价格（元）</label>
+                        <input type="number" id="book-price" min="0" step="0.01" value="0.00">
+                    </div>
+                    <div class="form-item">
+                        <label for="book-total">馆藏总数</label>
+                        <input type="number" id="book-total" min="0" step="1" value="1" required>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <label for="book-desc">简介</label>
+                    <textarea id="book-desc" placeholder="图书简介（选填）"></textarea>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn btn-ghost" data-close="book-modal">取消</button>
+                <button type="submit" class="btn btn-primary" id="btn-book-save">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 读者编辑弹窗 -->
+<div class="modal-mask" id="reader-modal">
+    <div class="modal">
+        <div class="modal-head">
+            <h3 id="reader-modal-title">新增读者</h3>
+            <button type="button" class="modal-close" data-close="reader-modal">✕</button>
+        </div>
+        <form id="reader-form">
+            <div class="modal-body">
+                <input type="hidden" id="reader-id">
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="reader-username">账号</label>
+                        <input type="text" id="reader-username" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="reader-name">姓名</label>
+                        <input type="text" id="reader-name" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="reader-password">密码</label>
+                        <input type="text" id="reader-password" placeholder="新增默认 123456，修改留空不变">
+                    </div>
+                    <div class="form-item">
+                        <label for="reader-status">状态</label>
+                        <select id="reader-status">
+                            <option value="1">正常</option>
+                            <option value="0">禁用</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="reader-phone">手机号</label>
+                        <input type="text" id="reader-phone">
+                    </div>
+                    <div class="form-item">
+                        <label for="reader-email">邮箱</label>
+                        <input type="email" id="reader-email">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn btn-ghost" data-close="reader-modal">取消</button>
+                <button type="submit" class="btn btn-primary" id="btn-reader-save">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

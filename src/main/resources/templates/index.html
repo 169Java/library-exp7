@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('首页')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar('home')}"></header>
+
+<main class="container">
+    <section class="hero">
+        <h1>发现好书，随时借阅</h1>
+        <p>
+            馆藏图书在线检索、读者自助注册登录、一键借阅与归还。
+            管理员可在后台维护图书与读者信息，所有数据通过 RESTful 接口异步交互。
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-white" href="#books">浏览馆藏</a>
+            <a class="btn btn-ghost" th:if="${session.loginUser == null}" th:href="@{/register}"
+               style="background: transparent; color:#fff; border-color: rgba(255,255,255,.45)">注册读者账号</a>
+            <a class="btn btn-ghost" th:if="${session.loginUser != null and session.loginUser.role == 'READER'}"
+               th:href="@{/reader/borrows}"
+               style="background: transparent; color:#fff; border-color: rgba(255,255,255,.45)">我的借阅</a>
+            <a class="btn btn-ghost" th:if="${session.loginUser != null and session.loginUser.role == 'ADMIN'}"
+               th:href="@{/admin}"
+               style="background: transparent; color:#fff; border-color: rgba(255,255,255,.45)">进入管理后台</a>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <span class="stat-label">图书种类</span>
+            <strong class="stat-value blue" id="stat-titles">-</strong>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">馆藏总量</span>
+            <strong class="stat-value" id="stat-total">-</strong>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">当前可借</span>
+            <strong class="stat-value green" id="stat-available">-</strong>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">已借出</span>
+            <strong class="stat-value orange" id="stat-borrowed">-</strong>
+        </div>
+    </section>
+
+    <section id="books">
+        <div class="toolbar">
+            <div class="search-bar">
+                <input type="text" id="keyword" placeholder="输入书名、作者或 ISBN 搜索馆藏">
+                <button type="button" class="btn btn-primary" id="btn-search">搜索</button>
+                <button type="button" class="btn btn-ghost" id="btn-reset">重置</button>
+            </div>
+            <span class="tag blue" id="result-tip">共 0 种图书</span>
+        </div>
+
+        <div class="book-grid" id="book-grid"></div>
+        <div class="empty" id="book-empty" style="display:none">
+            <span class="empty-icon">📚</span>
+            没有找到匹配的图书，换个关键词试试
+        </div>
+
+        <div class="pager" id="pager" style="display:none">
+            <button type="button" class="btn btn-ghost btn-sm" id="prev-page">上一页</button>
+            <span id="page-info">第 1 / 1 页</span>
+            <button type="button" class="btn btn-ghost btn-sm" id="next-page">下一页</button>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:inline="javascript">
+    window.APP = {
+        role: /*[[${session.loginUser != null ? session.loginUser.role : ''}]]*/ '',
+        name: /*[[${session.loginUser != null ? session.loginUser.name : ''}]]*/ ''
+    };
+</script>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+</body>
+</html>

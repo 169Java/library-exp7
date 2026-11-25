@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('我的借阅')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar('my')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <div>
+            <h1>我的借阅</h1>
+            <p class="subtitle">查看借阅记录，归还到期图书；应还日期为借阅日起 30 天</p>
+        </div>
+        <a class="btn btn-primary" th:href="@{/}">去首页借书</a>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <span class="stat-label">借阅中</span>
+            <strong class="stat-value orange" id="stat-borrowing">-</strong>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">已归还</span>
+            <strong class="stat-value green" id="stat-returned">-</strong>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">已逾期</span>
+            <strong class="stat-value" id="stat-overdue" style="color:#dc2626">-</strong>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">全部记录</span>
+            <strong class="stat-value blue" id="stat-total">-</strong>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <h2>借阅记录</h2>
+            <span class="tag blue" id="record-tip">共 0 条</span>
+        </div>
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>图书</th>
+                    <th>借阅日期</th>
+                    <th>应还日期</th>
+                    <th>归还日期</th>
+                    <th>状态</th>
+                    <th class="right">操作</th>
+                </tr>
+                </thead>
+                <tbody id="record-body"></tbody>
+            </table>
+        </div>
+        <div class="empty" id="record-empty" style="display:none">
+            <span class="empty-icon">📖</span>
+            还没有借阅记录，去首页挑选一本喜欢的书吧
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/reader-borrows.js}"></script>
+</body>
+</html>
