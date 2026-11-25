@@ -195,22 +195,27 @@ java -jar target/library-exp7-1.0.0.jar
 | (2) 数据库表及数据截图 | 第四节；`11-` ~ `14-` 数据表截图 |
 | (3) 前端关键代码与页面截图 | `src/main/resources/templates/`、`static/js/`；`01-` ~ `10-` 页面截图 |
 | (4) 后端关键代码与接口测试 | `src/main/java/com/example/library7/`；Swagger / Apifox 接口测试 |
-| (5) Swagger 文档、Gitee、截图与 README | Swagger 地址与 `docs/openapi.json`；本 README；全部效果截图 |
+| (5) Swagger 文档、代码托管、截图与 README | Swagger 地址与 `docs/openapi.json`；GitHub 仓库 <https://github.com/169Java/library-exp7>；本 README；全部效果截图 |
 
-## 九、提交到 Gitee
+## 九、代码仓库（GitHub）
 
-先在 Gitee 新建空仓库（如 `library-exp7`），然后在本目录执行：
+仓库地址：<https://github.com/169Java/library-exp7>
+
+已在本地完成 Git 初始化并推送到 `main` 分支。后续更新代码时执行：
 
 ```powershell
-git init
+cd "d:\trae_project\exp05\实验七"
 git add .
-git commit -m "实验七 图书管理系统"
-git branch -M master
-git remote add origin https://gitee.com/你的用户名/library-exp7.git
-git push -u origin master
+git commit -m "更新说明"
+git push
 ```
 
-提交后把仓库地址补充到本节即可。
+如需重新关联远程仓库：
+
+```powershell
+git remote add origin https://github.com/169Java/library-exp7.git
+git push -u origin main
+```
 
 ## 十、说明
 
